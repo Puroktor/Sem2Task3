@@ -42,6 +42,8 @@ public class Logic {
         }
     }
 
+    private static IStack<Integer> stack;
+
     public static Answer solution(int[][] mat, boolean useStandardStack) {
         if (mat.length == 0) {
             return new Answer(0, 0, 0, 0);
@@ -53,14 +55,15 @@ public class Logic {
         Arrays.fill(d, -1);
         int[] leftB;//левая граница
         int[] rightB;//правая граница
+        initStack(useStandardStack);
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 if (mat[i][j] == 0) {
                     d[j] = i;
                 }
             }
-            leftB = sequentialAlgorithm(new ArrRotator(d, true), useStandardStack);
-            rightB = sequentialAlgorithm(new ArrRotator(d, false), useStandardStack);
+            leftB = sequentialAlgorithm(new ArrRotator(d, true));
+            rightB = sequentialAlgorithm(new ArrRotator(d, false));
             for (int j = 0; j < m; j++) {
                 int s = (i - d[j]) * (rightB[j] - leftB[j] - 1);
                 if (s > ans) {
@@ -75,13 +78,7 @@ public class Logic {
         return new Answer(width, height, leftI, leftJ);
     }// по времени O(n * m), по памяти O(m)
 
-    private static int[] sequentialAlgorithm(ArrRotator arr, boolean useStandardStack) {
-        IStack<Integer> stack;
-        if (useStandardStack) {
-            stack = new StandardStack<>(); // просто обертка Stack<>(), чтобы 2 раза не писать sequentialAlgorithm
-        } else {
-            stack = new MyStack<>();
-        }
+    private static int[] sequentialAlgorithm(ArrRotator arr) {
         int[] d1 = new int[arr.length];
         for (int j = 0; j < arr.length; j++) {
             while (!stack.empty() && arr.getElement(stack.peek()) <= arr.getElement(j)) {
@@ -90,6 +87,15 @@ public class Logic {
             d1[arr.getIndex(j)] = stack.empty() ? arr.getIndex(-1) : arr.getIndex(stack.peek());
             stack.push(j);
         }
+        stack.clear();
         return d1;
     }//O(m) по времени, O(m) по памяти
+
+    private static void initStack(boolean useStandardStack) {
+        if (useStandardStack) {
+            stack = new StandardStack<>(); // просто обертка Stack<>(), чтобы не было повторений
+        } else {
+            stack = new MyStack<>();
+        }
+    }
 }

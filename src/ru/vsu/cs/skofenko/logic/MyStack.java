@@ -46,4 +46,10 @@ public class MyStack<T> implements IStack<T> {
     public boolean empty() {
         return size==0;
     }
+
+    @Override
+    public void clear() {
+        head=null;
+        size=0;
+    }
 }

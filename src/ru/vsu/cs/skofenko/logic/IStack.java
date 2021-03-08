@@ -5,4 +5,5 @@ interface IStack<T> {
     T pop();
     T push(T element);
     boolean empty();
+    void clear();
 }
